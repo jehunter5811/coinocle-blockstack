@@ -1,15 +1,10 @@
 {
-  "short_name": "Coinocle",
   "name": "Coinocle",
-  "icons": [
-    {
-      "src": "http://app.coinocle.com/favicon.ico",
-      "sizes": "192x192",
-      "type": "image/png"
-    }
-  ],
-  "start_url": "./index.html",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "start_url": "https://app.coinocle.com",
+  "description": "Coinocle is your decentralized and encrypted checkbook register for cryptocurrency.",
+  "icons": [{
+    "src": "https://i.imgur.com/VB8z9rV.png",
+    "sizes": "192x192",
+    "type": "image/png"
+  }]
 }

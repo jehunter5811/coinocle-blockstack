@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway');
+
+/* Apply to All */
+
+body {
+  font-family: 'Raleway', sans-serif;
+}
+
+a:hover {
+  cursor: pointer;
+}
+
+.add-button {
+  background: #d5982e!important;
+}
+
+/* Header Nav  */
+
+nav {
+  background: #fff!important;
+  box-shadow: none!important;
+  color: #000!important;
+  padding: 10px;
+}
+
+nav .brand-logo {
+  color: #000;
+}
+
+nav ul a {
+  color: #000;
+}
+
+.logo {
+  max-height: 100px;
+}
+
+/* Add Wallet */
+
+.coinbase img {
+  max-width: 50%;
+}
+
+/* Loading Page */
+
+.loading-indicator {
+  margin-top: 50px;
+}
