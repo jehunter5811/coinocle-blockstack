@@ -12,7 +12,10 @@ export function loadWallets() {
         wallets: []
       });
     }
-  });
+  })
+  .catch(error => {
+    console.log(error);
+  })
 }
 
 export function handleAddress(e) {
@@ -62,7 +65,17 @@ export function saveWallet() {
   putFile("wallets.json", JSON.stringify(this.state.wallets), { encrypt: true })
     .then(() => {
       console.log("Saved!");
-      window.M.toast({ html: "Wallet or account added!" });
+      if(this.state.deleting === true) {
+        window.M.toast({ html: "Wallet or account deleted!" });
+        this.setState({ deleting: false });
+      } else if(this.state.refreshing === true) {
+        window.M.toast({ html: "Account information updated!" });
+        this.setState({ refreshing: false });
+      } else {
+        window.M.toast({ html: "Wallet or account added!" });
+      }
+
+
       if(window.location.pathname.includes('auth')) {
         window.location.replace('/')
       }
@@ -70,4 +83,21 @@ export function saveWallet() {
     .catch(error => {
       console.log(error);
     });
+}
+
+export function checkCoinbaseWallets() {
+  this.setState({ refreshing: true });
+  window.M.toast({ html: "Updating account information..." });
+  let coinbaseWallets = this.state.wallets.filter(function (a) { return a.accountType === "Coinbase" });
+  if(coinbaseWallets.length > this.state.count) {
+    const thisWallet = coinbaseWallets.find((wallet) => {
+      return wallet.id.toString() === coinbaseWallets[this.state.count].id //this is comparing a string to a string
+    });
+    let index = thisWallet && thisWallet.id;
+    function findObjectIndex(wallet) {
+      return wallet.id === index; //this is comparing a number to a number
+    }
+    this.setState({index: coinbaseWallets.findIndex(findObjectIndex), refreshToken: thisWallet && thisWallet.refresh, accessToken: thisWallet && thisWallet.access, accountId: thisWallet && thisWallet.id });
+    setTimeout(this.getNewAccessToken, 300)
+  }
 }

@@ -1,9 +1,16 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import TotalBalance from './accountInfo/TotalBalance';
 import AddWallet from './wallets/AddWallet';
+import DeleteWallet from './wallets/DeleteWallet';
 
 export default class Dashboard extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      wallet: {}
+    }
+  }
   componentDidMount() {
     var elems = document.querySelectorAll('.modal');
     window.M.Modal.init(elems);
@@ -69,15 +76,25 @@ export default class Dashboard extends Component {
                 walletList.reverse().map(wallet => {
                 return(
                   <tr key={wallet.id}>
-                    <td>{wallet.walletName}</td>
+                    <td>{wallet.walletName} <span className='right'><a onClick={this.props.checkCoinbaseWallets}>Refresh</a></span></td>
                     <td>{wallet.balance || "-"}</td>
-                    <td><Link to={'/documents/doc/delete/'+ wallet.id}><i className="modal-trigger material-icons red-text delete-button">delete</i></Link></td>
+                    <td><a onClick={() => this.setState({wallet: wallet})} className="modal-trigger" href="#deleteWallet"><i className="material-icons red-text delete-button">delete</i></a></td>
                   </tr>
                 );
                 })
               }
               </tbody>
             </table>
+
+            {/* Delete Wallet Modal */}
+            <div id="deleteWallet" className="modal">
+              <DeleteWallet
+                handleDeleteWallet={this.props.handleDeleteWallet}
+                wallet={this.state.wallet}
+              />
+            </div>
+            {/* Delete Wallet Modal */}
+
           </div>
         </div>
         </div>

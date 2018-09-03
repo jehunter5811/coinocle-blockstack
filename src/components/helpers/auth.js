@@ -1,4 +1,4 @@
-
+import update from 'immutability-helper';
 let bearer = null;
 let refresh = null;
 let coinbaseAccount;
@@ -71,5 +71,68 @@ export function addCoinbase() {
 }
 
 export function getNewAccessToken() {
+  console.log(this.state.wallets);
+  var settings = {
+    "async": true,
+    "crossDomain": true,
+    "url": "https://api.coinbase.com/oauth/token",
+    "method": "POST",
+    "headers": {
+      "Cache-Control": "no-cache",
+      // "Postman-Token": "60738d2f-4c36-2425-4a7d-e0d573cd355e",
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    "data": {
+      "grant_type": "refresh_token",
+      "client_id": "5e10c95430a34c3490a4fd68fd1f40c4fe1f05db351318bfd0df5ea7b06ae29f", //TODO make these variables and don't commit them
+      "client_secret": "62060e56af300eb4d9bd59a27c61a7994dc4e7dc0f8782adc6b95848baf0ec43",
+      "refresh_token": this.state.refreshToken
+    }
+  }
 
+  window.$.ajax(settings).done(function (response) {
+    console.log(response);
+    bearer = response.access_token;
+    refresh = response.refresh_token;
+  })
+  .then(() => {
+    this.loadAccountRefresh();
+  })
+}
+
+export function loadAccountRefresh() {
+  var settings = {
+    "async": true,
+    "crossDomain": true,
+    "url": "https://api.coinbase.com/v2/accounts/" + this.state.accountId,
+    "method": "GET",
+    "headers": {
+      "Authorization": "Bearer " + bearer,
+      "Cache-Control": "no-cache"
+    }
+  }
+  window.$.ajax(settings).done(function (response) {
+    console.log(response);
+    coinbaseAccount = response.data;
+  })
+  .then(() => {
+    this.setState({ coinbaseAccount: coinbaseAccount})
+  })
+  .then(() => {
+    const object = {};
+    object.access = bearer;
+    object.refresh = refresh;
+    object.id = this.state.coinbaseAccount.id;
+    object.walletName = "Coinbase " + this.state.coinbaseAccount.name;
+    object.accountType = "Coinbase";
+    object.balance = this.state.coinbaseAccount.balance.amount;
+    object.currency = this.state.coinbaseAccount.currency;
+    object.dateAdded = new Date();
+    const index = this.state.index;
+    const updatedWallet = update(this.state.wallets, {$splice: [[index, 1, object]]});
+    this.setState({wallets: updatedWallet});
+  })
+  .then(() => {
+    this.saveWallet();
+  })
 }

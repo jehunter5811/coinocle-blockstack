@@ -17,8 +17,12 @@ import {
   handleAddress,
   handleWalletName,
   handleCoinbaseKey,
-  handleCoinbaseSecret
+  handleCoinbaseSecret,
+  checkCoinbaseWallets
 } from './helpers/wallets';
+import {
+  handleDeleteWallet,
+} from './helpers/deleteWallet';
 import {
   setCurrencies,
   filterCurrencyList,
@@ -27,7 +31,9 @@ import {
 import {
   getToken,
   loadAccount,
-  addCoinbase
+  addCoinbase,
+  getNewAccessToken,
+  loadAccountRefresh
 } from './helpers/auth';
 import Header from './Header';
 import Signin from './Signin';
@@ -49,7 +55,14 @@ export default class App extends Component {
       walletName: "",
       coinbaseKey: "",
       coinbaseSecret: "",
-      coinbaseAccount: []
+      coinbaseAccount: [],
+      index: "",
+      refreshToken: "",
+      accessToken: "",
+      accountId: "",
+      count: 0,
+      refreshing: false,
+      deleting: false
     };
     this.loadWallets = loadWallets.bind(this);
     this.handleAccountType = handleAccountType.bind(this);
@@ -66,6 +79,10 @@ export default class App extends Component {
     this.getToken = getToken.bind(this);
     this.loadAccount = loadAccount.bind(this);
     this.addCoinbase = addCoinbase.bind(this);
+    this.checkCoinbaseWallets = checkCoinbaseWallets.bind(this);
+    this.getNewAccessToken = getNewAccessToken.bind(this);
+    this.loadAccountRefresh = loadAccountRefresh.bind(this);
+    this.handleDeleteWallet = handleDeleteWallet.bind(this);
   }
 
   componentDidMount() {
@@ -123,6 +140,8 @@ export default class App extends Component {
                         handleWalletName={this.handleWalletName}
                         handleCoinbaseKey={this.handleCoinbaseKey}
                         handleCoinbaseSecret={this.handleCoinbaseSecret}
+                        checkCoinbaseWallets={this.checkCoinbaseWallets}
+                        handleDeleteWallet={this.handleDeleteWallet}
                         wallets={wallets}
                         accountType={accountType}
                         numberOfAddresses={numberOfAddresses}
