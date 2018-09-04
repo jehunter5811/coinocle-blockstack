@@ -29,16 +29,25 @@ import {
   handlSetCurrency
 } from './helpers/currencies';
 import {
+  getBalance
+} from './helpers/conversions';
+import {
   getToken,
   loadAccount,
   addCoinbase,
   getNewAccessToken,
   loadAccountRefresh
 } from './helpers/auth';
+import {
+  loadTransactions,
+  loadWalletTrans,
+  saveTransactions
+} from './helpers/transactions';
 import Header from './Header';
 import Signin from './Signin';
 import Dashboard from './Dashboard';
 import AllTransactions from './transactions/AllTransactions';
+import SingleWalletTrans from './transactions/SingleWalletTrans';
 import Auth from './Auth';
 
 export default class App extends Component {
@@ -50,7 +59,7 @@ export default class App extends Component {
       numberOfAddresses: 0,
       currencies: [],
       filteredCurrencies: [],
-      selectedCurrency: "",
+      selectedCurrency: "USD",
       address: "",
       walletName: "",
       coinbaseKey: "",
@@ -62,7 +71,9 @@ export default class App extends Component {
       accountId: "",
       count: 0,
       refreshing: false,
-      deleting: false
+      deleting: false,
+      walletToLoad: {},
+      singleWalletTrans: []
     };
     this.loadWallets = loadWallets.bind(this);
     this.handleAccountType = handleAccountType.bind(this);
@@ -83,6 +94,10 @@ export default class App extends Component {
     this.getNewAccessToken = getNewAccessToken.bind(this);
     this.loadAccountRefresh = loadAccountRefresh.bind(this);
     this.handleDeleteWallet = handleDeleteWallet.bind(this);
+    this.getBalance = getBalance.bind(this);
+    this.loadTransactions = loadTransactions.bind(this);
+    this.loadWalletTrans = loadWalletTrans.bind(this);
+    this.saveTransactions = saveTransactions.bind(this);
   }
 
   componentDidMount() {
@@ -113,7 +128,7 @@ export default class App extends Component {
   }
 
   render() {
-    const { wallets, accountType, numberOfAddresses, filteredCurrencies, selectedCurrency } = this.state;
+    const { wallets, accountType, numberOfAddresses, filteredCurrencies, selectedCurrency, singleWalletTrans, walletToLoad } = this.state;
 
     return (
       <div>
@@ -142,6 +157,7 @@ export default class App extends Component {
                         handleCoinbaseSecret={this.handleCoinbaseSecret}
                         checkCoinbaseWallets={this.checkCoinbaseWallets}
                         handleDeleteWallet={this.handleDeleteWallet}
+                        getBalance={this.getBalance}
                         wallets={wallets}
                         accountType={accountType}
                         numberOfAddresses={numberOfAddresses}
@@ -152,6 +168,14 @@ export default class App extends Component {
                     <Route exact path="/transactions" render={(props) =>
                       <AllTransactions {...props}
 
+                      />}
+                    />
+                    <Route exact path="/transactions/single/:id" render={(props) =>
+                      <SingleWalletTrans {...props}
+                        checkCoinbaseWallets={this.checkCoinbaseWallets}
+                        wallets={wallets}
+                        singleWalletTrans={singleWalletTrans}
+                        walletToLoad={walletToLoad}
                       />}
                     />
                     <Route path="/auth" render={(props) =>

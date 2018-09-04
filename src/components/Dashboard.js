@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-// import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import TotalBalance from './accountInfo/TotalBalance';
 import AddWallet from './wallets/AddWallet';
 import DeleteWallet from './wallets/DeleteWallet';
@@ -19,6 +19,7 @@ export default class Dashboard extends Component {
 
   render() {
     const { wallets, accountType, numberOfAddresses, filteredCurrencies, selectedCurrency } = this.props;
+    console.log(wallets);
     let walletList;
     if(wallets === undefined) {
       walletList = []
@@ -66,6 +67,7 @@ export default class Dashboard extends Component {
               <thead>
                 <tr>
                     <th>Wallet/Account Name</th>
+                    <th>Balance</th>
                     <th>Current Value</th>
                     <th></th>
                 </tr>
@@ -74,10 +76,16 @@ export default class Dashboard extends Component {
               <tbody>
                 {
                 walletList.reverse().map(wallet => {
+                  // let value = this.props.getBalance(wallet)
+                  let value = "Hold"
+                  // let cryptoPrice = axios.get('https://min-api.cryptocompare.com/data/price?fsym=' + wallet.currency + '&tsyms=' + selectedCurrency).then((response) => { return Object.values(response.data)[0]});
+                  // let value = cryptoPrice * wallet.balance;
+                  // console.log(cryptoPrice);
                 return(
                   <tr key={wallet.id}>
-                    <td>{wallet.walletName} <span className='right'><a onClick={this.props.checkCoinbaseWallets}>Refresh</a></span></td>
+                    <td><Link to={'/transactions/single/' + wallet.id}>{wallet.walletName}</Link> <span className='right'><a onClick={() => this.props.checkCoinbaseWallets(wallet)}>Refresh</a></span></td>
                     <td>{wallet.balance || "-"}</td>
+                    <td>{value}</td>
                     <td><a onClick={() => this.setState({wallet: wallet})} className="modal-trigger" href="#deleteWallet"><i className="material-icons red-text delete-button">delete</i></a></td>
                   </tr>
                 );

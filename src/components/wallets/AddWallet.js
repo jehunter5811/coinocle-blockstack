@@ -18,22 +18,23 @@ export default class AddWallet extends Component {
           <form className="col s12">
             <div className="row">
               <div className="input-field col s12">
-                <input onChange={this.props.handleWalletName} placeholder="Wallet or Account Name" id="wallet_name" type="text" />
-                <label htmlFor="first_name">Wallet or Account Name</label>
-              </div>
-              <div className="input-field col s12">
                 <select value={accountType} onChange={this.props.handleAccountType}>
                   <option value="" disabled selected>Select Account Type</option>
                   <option value="single">Enter Crypto Address</option>
                   <option value="coinbase">Connect to Coinbase</option>
                   <option value="gdax">Connect to GDAX</option>
                   <option value="gemini">Connect to Gemini</option>
+                  <option value="graphite">Import from Graphite Sheets</option>
                 </select>
                 <label>Account/Wallet Type</label>
               </div>
               {
                 accountType === "single" ?
                 <div>
+                  <div className="input-field col s12">
+                    <input onChange={this.props.handleWalletName} placeholder="Wallet or Account Name" id="wallet_name" type="text" />
+                    <label htmlFor="first_name">Wallet or Account Name</label>
+                  </div>
                   <div className="input-field col s12">
                     <input onChange={this.props.handleAddress} placeholder="Address" id="address" type="text" />
                     <label className="active" htmlFor="address">Wallet Address</label>
@@ -67,7 +68,7 @@ export default class AddWallet extends Component {
                 accountType === "coinbase" ?
                 <div className="input-field col s12">
                   <p>Click to connect</p>
-                  <a onClick={this.props.addWallet} className='coinbase modal-trigger' href='#coinbaseModal'><img className="left coinbase-logo" src={coinbase} alt='connect with coinbase' /></a>
+                  <a onClick={this.props.addWallet} className='coinbase modal-trigger' href='#coinbaseModal'><img className="coinbase-logo" src={coinbase} alt='connect with coinbase' /></a>
                 </div> :
                 accountType === "gdax" ?
                 <div className="input-field col s12">

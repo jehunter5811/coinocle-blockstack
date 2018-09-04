@@ -71,7 +71,6 @@ export function addCoinbase() {
 }
 
 export function getNewAccessToken() {
-  console.log(this.state.wallets);
   var settings = {
     "async": true,
     "crossDomain": true,
@@ -130,7 +129,7 @@ export function loadAccountRefresh() {
     object.dateAdded = new Date();
     const index = this.state.index;
     const updatedWallet = update(this.state.wallets, {$splice: [[index, 1, object]]});
-    this.setState({wallets: updatedWallet});
+    this.setState({wallets: updatedWallet, walletToLoad: object });
   })
   .then(() => {
     this.saveWallet();

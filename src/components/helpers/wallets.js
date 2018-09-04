@@ -13,6 +13,9 @@ export function loadWallets() {
       });
     }
   })
+  .then(() => {
+    console.log("Done!")
+  })
   .catch(error => {
     console.log(error);
   })
@@ -55,7 +58,7 @@ export function addWallet() {
     this.setState({ wallets: [...this.state.wallets, object] });
     setTimeout(this.saveWallet, 300);
   } else if (this.state.accountType === "coinbase") {
-    window.location.replace('https://www.coinbase.com/oauth/authorize?client_id=5e10c95430a34c3490a4fd68fd1f40c4fe1f05db351318bfd0df5ea7b06ae29f&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fcoinbase%2Fcallback&response_type=code&scope=wallet%3Auser%3Aread%2Cwallet%3Aaccounts%3Aread')
+    window.location.replace('https://www.coinbase.com/oauth/authorize?client_id=5e10c95430a34c3490a4fd68fd1f40c4fe1f05db351318bfd0df5ea7b06ae29f&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fauth%2Fcoinbase%2Fcallback&response_type=code&scope=wallet%3Auser%3Aread%2Cwallet%3Aaccounts%3Aread%2Cwallet%3Atransactions%3Aread')
   } else if (this.state.accountType === "gdax") {
   } else if (this.state.accountType === "gemini") {
   }
@@ -79,19 +82,32 @@ export function saveWallet() {
       if(window.location.pathname.includes('auth')) {
         window.location.replace('/')
       }
+      if(window.location.href.includes('transactions/single')) {
+        this.loadWalletTrans();
+      }
     })
     .catch(error => {
       console.log(error);
     });
 }
 
-export function checkCoinbaseWallets() {
+export function checkCoinbaseWallets(props) {
   this.setState({ refreshing: true });
   window.M.toast({ html: "Updating account information..." });
   let coinbaseWallets = this.state.wallets.filter(function (a) { return a.accountType === "Coinbase" });
-  if(coinbaseWallets.length > this.state.count) {
+  if(window.location.href.includes('transactions/single')) {
     const thisWallet = coinbaseWallets.find((wallet) => {
-      return wallet.id.toString() === coinbaseWallets[this.state.count].id //this is comparing a string to a string
+      return wallet.id.toString() === props //this is comparing a string to a string
+    });
+    let index = thisWallet && thisWallet.id;
+    function findObjectIndex(wallet) {
+      return wallet.id === index; //this is comparing a number to a number
+    }
+    this.setState({index: coinbaseWallets.findIndex(findObjectIndex), refreshToken: thisWallet && thisWallet.refresh, accessToken: thisWallet && thisWallet.access, accountId: thisWallet && thisWallet.id });
+    setTimeout(this.getNewAccessToken, 300)
+  } else {
+    const thisWallet = coinbaseWallets.find((wallet) => {
+      return wallet.id.toString() === props.id //this is comparing a string to a string
     });
     let index = thisWallet && thisWallet.id;
     function findObjectIndex(wallet) {
