@@ -3,7 +3,7 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import {
   isSignInPending,
   isUserSignedIn,
-  // loadUserData,
+  loadUserData,
   redirectToSignIn,
   handlePendingSignIn,
   signUserOut,
@@ -101,8 +101,8 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    this.loadWallets();
-    this.setCurrencies();
+    isUserSignedIn() ? this.loadWallets() : loadUserData();
+    isUserSignedIn() ? this.setCurrencies() : loadUserData();
   }
 
   handleSignIn(e) {
