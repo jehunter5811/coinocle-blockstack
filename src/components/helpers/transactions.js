@@ -73,4 +73,7 @@ export function saveTransactions() {
       .then(() => {
         console.log("Saved!");
       })
+      .catch(error => {
+        console.log(error);
+      })
 }

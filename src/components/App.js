@@ -43,6 +43,15 @@ import {
   loadWalletTrans,
   saveTransactions
 } from './helpers/transactions';
+import {
+  loadCategories,
+  handleCategory,
+  addCategory,
+  saveCategory,
+  handleSetCategory,
+  handleCategoryChange,
+  saveTrans
+} from './helpers/categories';
 import Header from './Header';
 import Signin from './Signin';
 import Dashboard from './Dashboard';
@@ -73,7 +82,10 @@ export default class App extends Component {
       refreshing: false,
       deleting: false,
       walletToLoad: {},
-      singleWalletTrans: []
+      singleWalletTrans: [],
+      options: [],
+      category: "",
+      change: false
     };
     this.loadWallets = loadWallets.bind(this);
     this.handleAccountType = handleAccountType.bind(this);
@@ -98,11 +110,19 @@ export default class App extends Component {
     this.loadTransactions = loadTransactions.bind(this);
     this.loadWalletTrans = loadWalletTrans.bind(this);
     this.saveTransactions = saveTransactions.bind(this);
+    this.loadCategories = loadCategories.bind(this);
+    this.handleCategory = handleCategory.bind(this);
+    this.addCategory = addCategory.bind(this);
+    this.saveCategory = saveCategory.bind(this);
+    this.handleSetCategory = handleSetCategory.bind(this);
+    this.handleCategoryChange = handleCategoryChange.bind(this);
+    this.saveTrans = saveTrans.bind(this);
   }
 
   componentDidMount() {
     isUserSignedIn() ? this.loadWallets() : loadUserData();
-    isUserSignedIn() ? this.setCurrencies() : loadUserData();
+    // isUserSignedIn() ? this.setCurrencies() : loadUserData();
+    isUserSignedIn() ? this.loadCategories() : loadUserData();
   }
 
   handleSignIn(e) {
@@ -128,7 +148,7 @@ export default class App extends Component {
   }
 
   render() {
-    const { wallets, accountType, numberOfAddresses, filteredCurrencies, selectedCurrency, singleWalletTrans, walletToLoad } = this.state;
+    const { category, change, wallets, accountType, numberOfAddresses, options, filteredCurrencies, selectedCurrency, singleWalletTrans, walletToLoad } = this.state;
 
     return (
       <div>
@@ -173,9 +193,17 @@ export default class App extends Component {
                     <Route exact path="/transactions/single/:id" render={(props) =>
                       <SingleWalletTrans {...props}
                         checkCoinbaseWallets={this.checkCoinbaseWallets}
+                        loadCategories={this.loadCategories}
+                        handleCategory={this.handleCategory}
+                        addCategory={this.addCategory}
+                        handleSetCategory={this.handleSetCategory}
+                        handleCategoryChange={this.handleCategoryChange}
                         wallets={wallets}
                         singleWalletTrans={singleWalletTrans}
                         walletToLoad={walletToLoad}
+                        options={options}
+                        change={change}
+                        category={category}
                       />}
                     />
                     <Route path="/auth" render={(props) =>

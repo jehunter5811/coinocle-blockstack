@@ -3,10 +3,13 @@ import React, { Component } from 'react';
 export default class SingleWalletTrans extends Component {
   componentDidMount() {
     this.props.checkCoinbaseWallets(window.location.href.split('single/')[1]);
+    var elems = document.querySelectorAll('.modal');
+    window.M.Modal.init(elems);
   }
 
   render() {
-    const { singleWalletTrans, walletToLoad } = this.props;
+    const { singleWalletTrans, walletToLoad, options, change, category } = this.props;
+    console.log(category)
     return (
       <div>
         <div className="container">
@@ -18,13 +21,13 @@ export default class SingleWalletTrans extends Component {
                   <th>Inflow/Outflow</th>
                   <th>Amount</th>
                   <th>Coin Amount</th>
-                  <th>Category</th>
+                  <th>Category <span className="tiny right"><a className="modal-trigger" href="#categoryModal">Add categories</a></span></th>
               </tr>
             </thead>
 
             <tbody>
               {
-              singleWalletTrans.reverse().map(trans => {
+              singleWalletTrans.map(trans => {
               return(
                 <tr key={trans.id}>
                   <td>{trans.created_at}</td>
@@ -32,14 +35,16 @@ export default class SingleWalletTrans extends Component {
                   <td>{trans.native_amount.amount}</td>
                   <td>{trans.amount.amount}</td>
                   <td>
-                  <select>
+                  <select value={trans.category} onChange={this.props.handleSetCategory}>
                     <option value="" disabled selected>Categorize transaction</option>
-                    <option value="1">Category 1</option>
-                    <option value="2">Category 2</option>
-                    <option value="3">Category 3</option>
-                    <option value="4">Category 4</option>
-                    <option value="5">Category 5</option>
+                    <option value="none">None</option>
+                    {options.reverse().map(option => {
+                      return(
+                        <option key={option} value={option}>{option}</option>
+                      )
+                    })}
                   </select>
+                  {change ? <span className="right tiny"><a onClick={() => this.props.handleCategoryChange(trans)}>Save</a></span> : <span className="hide"></span>}
                   </td>
                 </tr>
               );
@@ -47,6 +52,20 @@ export default class SingleWalletTrans extends Component {
             }
             </tbody>
           </table>
+
+          {/* Category Modal */}
+          <div id="categoryModal" className="modal">
+           <div className="modal-content">
+             <h4>Add Transaction Category</h4>
+             <input placeholder="New category" id="category" type="text" onChange={this.props.handleCategory} />
+             <label htmlFor="category">New Category</label>
+           </div>
+           <div className="modal-footer">
+             <a onClick={this.props.addCategory} className="modal-close waves-effect waves-green btn-flat">Add Category</a>
+             <a className="modal-close waves-effect waves-green btn-flat">Cancel</a>
+           </div>
+         </div>
+          {/* End Category Modal */}
         </div>
       </div>
     );
